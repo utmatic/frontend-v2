@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Utmatic PDF Processor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
+    }
+    label, select, input {
+      display: block;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Utmatic PDF Processor</h1>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <label for="pdf">Upload PDF:</label>
+    <input type="file" name="pdf" id="pdf" required>
+
+    <label for="mode">Mode:</label>
+    <select name="mode" id="mode" required>
+      <option value="utm-only">UTM Only</option>
+      <option value="hyperlink-utm">Hyperlink + UTM</option>
+    </select>
+
+    <label for="utm_source">UTM Source:</label>
+    <input type="text" name="utm_source" id="utm_source" required>
+
+    <label for="utm_medium">UTM Medium:</label>
+    <input type="text" name="utm_medium" id="utm_medium" required>
+
+    <label for="utm_campaign">UTM Campaign:</label>
+    <input type="text" name="utm_campaign" id="utm_campaign" required>
+
+    <div id="extraFields" style="display: none;">
+      <label for="base_url">Base URL:</label>
+      <input type="text" name="base_url" id="base_url">
+
+      <label for="item_format">Item Format (e.g., NNNN-LLLL):</label>
+      <input type="text" name="item_format" id="item_format">
+    </div>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    document.getElementById('mode').addEventListener('change', function () {
+      document.getElementById('extraFields').style.display =
+        this.value === 'hyperlink-utm' ? 'block' : 'none';
+    });
+
+    document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      document.getElementById('status').innerText = 'Processing...';
+
+      try {
+        const response = await fetch('https://your-render-backend-url.com/process', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) throw new Error('Server error');
+
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'processed.pdf';
+        link.click();
+        document.getElementById('status').innerText = 'Download started.';
+      } catch (err) {
+        document.getElementById('status').innerText = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
