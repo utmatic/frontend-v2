@@ -12,6 +12,9 @@
   </form>
   <div id="result"></div>
   <script>
+    // Use your live backend URL!
+    const BACKEND_URL = "https://backend-v2-6i8l.onrender.com/check_pdf_links";
+
     document.getElementById('uploadForm').onsubmit = async function(e) {
       e.preventDefault();
       const fileInput = document.getElementById('pdfFile');
@@ -24,7 +27,7 @@
       document.getElementById('result').innerHTML = "Processing...";
 
       try {
-        const response = await fetch('/check_pdf_links', {
+        const response = await fetch(BACKEND_URL, {
           method: 'POST',
           body: formData
         });
