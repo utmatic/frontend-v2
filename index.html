@@ -1,58 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>PDF Link Health Checker</title>
-</head>
-<body>
-  <h1>PDF Link Health Checker</h1>
-  <form id="uploadForm">
-    <input type="file" id="pdfFile" accept="application/pdf" required>
-    <button type="submit">Check Links</button>
-  </form>
-  <div id="result"></div>
-  <script>
-    // Use your live backend URL!
-    const BACKEND_URL = "https://backend-v2-6i8l.onrender.com/check_pdf_links";
-
-    document.getElementById('uploadForm').onsubmit = async function(e) {
-      e.preventDefault();
-      const fileInput = document.getElementById('pdfFile');
-      if (!fileInput.files.length) return;
-      const file = fileInput.files[0];
-
-      const formData = new FormData();
-      formData.append('file', file);
-
-      document.getElementById('result').innerHTML = "Processing...";
-
-      try {
-        const response = await fetch(BACKEND_URL, {
-          method: 'POST',
-          body: formData
-        });
-        if (!response.ok) throw new Error('API error');
-        const data = await response.json();
-
-        if (!data.links.length) {
-          document.getElementById('result').textContent = "No links found in PDF.";
-          return;
-        }
-
-        let html = `<table border="1" cellpadding="5"><tr><th>URL</th><th>HTTP Status</th><th>Flags</th></tr>`;
-        for (const link of data.links) {
-          html += `<tr>
-            <td><a href="${link.url}" target="_blank">${link.url}</a></td>
-            <td>${link.http_status ?? ''}</td>
-            <td>${link.content_flags && link.content_flags.length ? link.content_flags.join(', ') : ''}</td>
-          </tr>`;
-        }
-        html += '</table>';
-        document.getElementById('result').innerHTML = html;
-      } catch (err) {
-        document.getElementById('result').textContent = "Error: " + err.message;
-      }
-    };
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Content Repurposing Engine</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
